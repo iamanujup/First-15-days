@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101827">
+<title>CHECKMARG — 15 Days Challenge</title>
+<style>
+:root{--bg:#0b1220;--card:#142137;--card2:#1b2b43;--line:#2a3c57;--txt:#f2f6ff;--muted:#a7b5c9;--gold:#f4bd50;--green:#39c994}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top right,#1c3452,transparent 38%),var(--bg);color:var(--txt);font-family:Arial,"Noto Sans Devanagari",sans-serif}
+.wrap{max-width:900px;margin:auto;padding:22px 14px 45px}.head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.logo{font-size:27px;font-weight:900;letter-spacing:2px}.logo span{color:var(--gold)}.sub,.muted{color:var(--muted);font-size:13px}
+.hero,.panel{background:rgba(20,33,55,.96);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:15px}
+.hero h1{font-size:clamp(23px,5vw,34px);margin:0 0 7px}.hero p{color:var(--muted);margin:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:17px}.stat{background:var(--card2);border-radius:12px;padding:12px}.stat b{font-size:22px;display:block}.stat small{font-size:12px;color:var(--muted)}
+.bar{height:9px;border-radius:20px;background:#2a3c57;overflow:hidden;margin-top:12px}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--green),#a0edc8);transition:width .2s}
+.days{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.day{border:1px solid var(--line);border-radius:10px;background:var(--card2);color:var(--muted);padding:9px 3px;font-size:12px;cursor:pointer}.day b{display:block;color:var(--txt);font-size:14px;margin-bottom:3px}.day.active{border-color:var(--gold);background:#3a3224}.day.complete{box-shadow:inset 0 -3px var(--green)}
+.layout{display:grid;grid-template-columns:1.3fr .7fr;gap:15px}.panel h2{font-size:18px;margin:0 0 13px}
+.habit{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--line)}.habit:last-child{border:0}.habit input{width:21px;height:21px;accent-color:var(--green);flex-shrink:0}.habit label{flex:1;font-size:15px;cursor:pointer}.habit small{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+textarea{width:100%;min-height:82px;resize:vertical;border:1px solid var(--line);border-radius:11px;background:#0d1727;color:var(--txt);padding:11px;font:inherit}.field{margin:12px 0}.field label{display:block;color:var(--muted);font-size:13px;margin-bottom:7px}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:10px 14px;background:var(--gold);color:#241a08;font-weight:bold}.secondary{background:#2a3c57;color:var(--txt)}.actions{display:flex;gap:8px;flex-wrap:wrap}.note{padding:11px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);font-size:12px;line-height:1.5}
+@media(max-width:720px){.layout{grid-template-columns:1fr}}@media(max-width:400px){.stats{gap:6px}.stat{padding:9px}.stat b{font-size:19px}.day{font-size:10px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="head">
+ <div><div class="logo">CHECK<span>MARG</span></div><div class="sub">15 DAYS DISCIPLINE CHALLENGE · 11–25 NOVEMBER 2026</div></div>
+ <div class="muted">PERSONAL TRACKER</div>
+</header>
+<section class="hero">
+ <h1>हर दिन थोड़ा बेहतर।</h1><p>छोटे कदम, मजबूत आदतें और लगातार मेहनत।</p>
+ <div class="stats">
+  <div class="stat"><b id="totalPct">0%</b><small>कुल प्रगति</small></div>
+  <div class="stat"><b id="totalDone">0 / 165</b><small>पूरे Targets</small></div>
+  <div class="stat"><b id="fullDays">0 / 15</b><small>पूरे दिन</small></div>
+ </div><div class="bar"><div class="fill" id="totalBar"></div></div>
+</section>
+<section class="panel"><h2>15 दिनों का कैलेंडर</h2><div class="days" id="days"></div></section>
+<div class="layout">
+ <div>
+  <section class="panel"><h2 id="dayHeading">Day 1 — आज के Targets</h2><div id="habits"></div></section>
+  <section class="panel">
+   <h2>Daily Update & कल की तैयारी</h2>
+   <div class="field"><label for="reflection">आज का Target Update / नई Learning</label><textarea id="reflection" placeholder="आज क्या सीखा? क्या पूरा हुआ?"></textarea></div>
+   <div class="field"><label for="tomorrow">Next Day Plan</label><textarea id="tomorrow" placeholder="कल के जरूरी काम लिखें..."></textarea></div>
+   <div class="actions"><button onclick="clearDay()">आज का दिन Reset करें</button><button class="secondary" onclick="resetAll()">पूरा Tracker Reset</button></div>
+  </section>
+ </div>
+ <aside>
+  <section class="panel"><h2>आज की Progress</h2>
+   <div class="stat"><b id="dayPct">0%</b><small>Completion</small><div class="bar"><div class="fill" id="dayBar"></div></div></div>
+   <div class="stats"><div class="stat"><b id="doneCount">0</b><small>पूरे</small></div><div class="stat"><b id="leftCount">11</b><small>बाकी</small></div><div class="stat"><b id="missCount">11</b><small>अधूरे</small></div></div>
+  </section>
+  <section class="panel"><h2>Challenge Rules</h2><ul class="muted" style="padding-left:19px;line-height:1.9"><li>ईमानदारी से checkmark लगाएँ।</li><li>Study Table पर Reels नहीं।</li><li>हर दिन Diary और Next Day Plan।</li><li>एक दिन miss हो तो अगले दिन फिर शुरू करें।</li></ul></section>
+  <div class="note">ध्यान दें: यह No-Save HTML है। कोई Cloud, Server या Browser Storage इस्तेमाल नहीं होता। Page refresh या बंद करने पर सभी checkmarks और notes reset हो जाएँगे।</div>
+ </aside>
+</div>
+</main>
+<script>
+const tasks=[
+ ["सुबह उठने के बाद फोन नहीं","20 मिनट"],
+ ["सोने से पहले फोन नहीं","20 मिनट"],
+ ["योगा","20 मिनट"],
+ ["हनुमान चालीसा","1 बार"],
+ ["Study","6 घंटे"],
+ ["Study Table पर Reels नहीं","पूरा Study Session"],
+ ["Self Help Book","20 मिनट"],
+ ["Meditation","10 मिनट"],
+ ["Phone Off Zone","3 घंटे"],
+ ["Daily Diary + New Learning Notes","5 मिनट"],
+ ["Daily Target Update और Next Day Plan","रोज़"]
+];
+const start=new Date("2026-11-11T12:00:00"), days=15;
+let selected=0, data=Array.from({length:days},()=>({checks:Array(tasks.length).fill(false),reflection:"",tomorrow:""}));
+const $=id=>document.getElementById(id);
+function dateAt(i){let d=new Date(start);d.setDate(d.getDate()+i);return d}
+function dateText(i){return dateAt(i).toLocaleDateString("hi-IN",{day:"numeric",month:"short"})}
+function renderDays(){
+ $("days").innerHTML="";
+ data.forEach((r,i)=>{let n=r.checks.filter(Boolean).length,b=document.createElement("button");b.className="day"+(i===selected?" active":"")+(n===tasks.length?" complete":"");b.innerHTML=`<b>Day ${i+1}</b>${dateText(i)}<br>${Math.round(n/tasks.length*100)}%`;b.onclick=()=>{selected=i;render()};$("days").appendChild(b)});
+}
+function renderHabits(){
+ const r=data[selected];$("dayHeading").textContent=`Day ${selected+1} — ${dateText(selected)} के Targets`;$("habits").innerHTML="";
+ tasks.forEach(([name,target],i)=>{let row=document.createElement("div");row.className="habit";let cb=document.createElement("input");cb.type="checkbox";cb.checked=r.checks[i];cb.id="task"+i;cb.onchange=()=>{r.checks[i]=cb.checked;renderStats();renderDays()};let label=document.createElement("label");label.htmlFor=cb.id;label.textContent=name;let small=document.createElement("small");small.textContent=target;label.appendChild(small);row.append(cb,label);$("habits").appendChild(row)});
+ $("reflection").value=r.reflection;$("tomorrow").value=r.tomorrow;
+}
+function renderStats(){
+ let done=0,full=0;data.forEach(r=>{let n=r.checks.filter(Boolean).length;done+=n;if(n===tasks.length)full++});
+ let pct=Math.round(done/(days*tasks.length)*100),n=data[selected].checks.filter(Boolean).length,p=Math.round(n/tasks.length*100);
+ $("totalPct").textContent=pct+"%";$("totalDone").textContent=done+" / "+(days*tasks.length);$("fullDays").textContent=full+" / "+days;$("totalBar").style.width=pct+"%";
+ $("dayPct").textContent=p+"%";$("dayBar").style.width=p+"%";$("doneCount").textContent=n;$("leftCount").textContent=tasks.length-n;$("missCount").textContent=tasks.length-n;
+}
+function render(){renderDays();renderHabits();renderStats()}
+$("reflection").addEventListener("input",e=>data[selected].reflection=e.target.value);
+$("tomorrow").addEventListener("input",e=>data[selected].tomorrow=e.target.value);
+function clearDay(){if(confirm("इस दिन के सभी checkmarks और notes हटाएँ?")){data[selected]={checks:Array(tasks.length).fill(false),reflection:"",tomorrow:""};render()}}
+function resetAll(){if(confirm("सभी 15 दिनों का tracker reset करना चाहते हैं?")){data=Array.from({length:days},()=>({checks:Array(tasks.length).fill(false),reflection:"",tomorrow:""}));selected=0;render()}}
+render();
+</script>
+</body>
+</html>
